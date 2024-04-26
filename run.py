@@ -1,3 +1,8 @@
+#Legend
+# X for placing ship and hit battleship
+# " " for available space
+# "-" for missed shot 
+
 import random
 
 OUR_BOARD = [[" "] * 8 for x in range(8)]
@@ -13,8 +18,15 @@ def board(board):
         print("%d|%s|" % (row_number, "|".join(row)))
         row_number += 1
 
-def create_ships():
-    pass
+def create_ships(board):
+    for ship range(5):
+        ship_row = randint(0,7)
+        ship_column = randint(0,7)
+        while board[ship_row][ship_column] == "X":
+            ship_row = randint(0,7)
+            ship_column = randint(0,7)
+        board[ship_column][ship_column] = 'X'
+
 
 def get_ship_location():
     pass
