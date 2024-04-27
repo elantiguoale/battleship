@@ -3,11 +3,10 @@
 # " " for available space
 # "-" for missed shot 
 
-import random
 from random import randint
 
 OUR_BOARD = [[" "] * 8 for x in range(8)]
-COMPUTER_BOARD = [[" "] * 8 for x in range(8)]
+COMPUTER_BOARD = [[" "] * 8 for i in range(8)]
 
 letters_to_numbers = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F':5, 'G':6, 'H': 7 }
 
@@ -26,10 +25,10 @@ def create_ships(board):
         while board[ship_row][ship_column] == "X":
             ship_row = randint(0,7)
             ship_column = randint(0,7)
-        board[ship_column][ship_column] = 'X'
+        board[ship_row][ship_column] = 'X'
 
 
-def get_ship_location():
+def attack_ship():
     row = input("Enter a ship row 1-8")
     while row not in "12345678":
         print("Please enter a ship row 1-8")
@@ -38,7 +37,7 @@ def get_ship_location():
     while column not in "ABCDEFGH":
         print("Please enter a valir column")
         column = input("Please enter a ship column A-H").upper()
-    return int(row) -1, letters_to_numbersp[column]
+    return int(row) -1, letters_to_numbers[column]
 
 
 def count_hit_ships(board):
@@ -49,7 +48,33 @@ def count_hit_ships(board):
                 count +=1
     return count
 
-create_ships(OUR_BOARD)
-turns = 10
-print(board(OUR_BOARD))
-print(board(COMPUTER_BOARD))
+def play_game():
+    create_ships(OUR_BOARD)
+    create_ships(COMPUTER_BOARD)
+    turns = 10
+    while turns > 0:
+        print("Welcome to Battleship!")
+        
+        print(board(OUR_BOARD))
+        print(board(COMPUTER_BOARD))
+        row, column = attack_ship()
+        if COMPUTER_BOARD[row][column] == "-":
+            print('You already have guessed that, try somewhere else')
+        elif OUR_BOARD[row][column] == 'X':
+            print("ITS A HIT!!! GOODJOB!!!")
+            COMPUTER_BOARD[row][column] = "X"
+            turns -= 1
+        else:
+            print("Sorry, you missed!")
+            COMPUTER_BOARD[row][column] = '-'
+            turns -= 1
+        if count_hit_ships(COMPUTER_BOARD)==5:
+            print("Congratulations all the ships are sunk! You won!")
+            break
+        print(f"You have {turns} turns left")
+        if turns == 0:
+            print("Sorry, No more turns, Game Over")
+            break
+
+
+playgame()
