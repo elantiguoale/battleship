@@ -1,10 +1,13 @@
 #Legend
-# X for placing ship and hit battleship
+# S for ship locations
+# X for battleships hit
 # " " for available space
 # "-" for missed shot 
 
 from random import randint
+from random import choice
 
+global attacked_positions
 OUR_BOARD = [[" "] * 8 for x in range(8)]
 COMPUTER_BOARD = [[" "] * 8 for i in range(8)]
 
@@ -18,26 +21,36 @@ def board(board):
         result += "%d|%s|\n" % (row_number, "|".join(row))
         row_number += 1
     return result
+
 def create_ships(board):
     for ship in range(5):
         ship_row = randint(0,7)
         ship_column = randint(0,7)
-        while board[ship_row][ship_column] == "X":
+        while board[ship_row][ship_column] == "S":
             ship_row = randint(0,7)
             ship_column = randint(0,7)
-        board[ship_row][ship_column] = 'X'
-
+        board[ship_row][ship_column] = 'S'
 
 def attack_ship():
-    row = input("Enter a ship row 1-8")
-    while row not in "12345678":
-        print("Please enter a ship row 1-8")
-        row = input("Please enter a ship row 1-8")
-    column = input("Please enter a ship column A-H").upper()
-    while column not in "ABCDEFGH":
-        print("Please enter a valir column")
-        column = input("Please enter a ship column A-H").upper()
-    return int(row) -1, letters_to_numbers[column]
+    while True:
+        row = input("Enter a ship row 1-8: ").strip()
+        if row and row in "12345678":
+            break  
+        print("Please enter a valid ship row 1-8")
+    while True:
+        column = input("Enter a ship column A-H: ").strip().upper()
+        if column and column in "ABCDEFGH":
+            break 
+        print("Please enter a valid column (A-H)")
+    return int(row) - 1, letters_to_numbers[column]
+
+def computer_attack(attacked_positions):
+    while True:
+        row = randint(0, 7)
+        column = randint(0, 7)
+        if (row, column) not in attacked_positions:
+            attacked_positions.append((row, column))
+            return row, column
 
 
 def count_hit_ships(board):
@@ -49,32 +62,40 @@ def count_hit_ships(board):
     return count
 
 def play_game():
-    create_ships(OUR_BOARD)
-    create_ships(COMPUTER_BOARD)
-    turns = 10
-    while turns > 0:
+    attacked_positions = []
+    while True:
         print("Welcome to Battleship!")
-        
+        print("This is your Board")
         print(board(OUR_BOARD))
+        print("This is the Computers Board")
         print(board(COMPUTER_BOARD))
         row, column = attack_ship()
-        if COMPUTER_BOARD[row][column] == "-":
+        while COMPUTER_BOARD[row][column] == "-":
             print('You already have guessed that, try somewhere else')
-        elif OUR_BOARD[row][column] == 'X':
+            row, column = attack_ship()
+        if COMPUTER_BOARD[row][column] == 'S':
             print("ITS A HIT!!! GOODJOB!!!")
             COMPUTER_BOARD[row][column] = "X"
-            turns -= 1
         else:
             print("Sorry, you missed!")
             COMPUTER_BOARD[row][column] = '-'
-            turns -= 1
         if count_hit_ships(COMPUTER_BOARD)==5:
             print("Congratulations all the ships are sunk! You won!")
             break
-        print(f"You have {turns} turns left")
-        if turns == 0:
-            print("Sorry, No more turns, Game Over")
+##COMPUTERS TURN
+        row, column = computer_attack(attacked_positions)
+        if OUR_BOARD[row][column] == "S":
+            print("The computer hits your ship!")
+            OUR_BOARD[row][column] = "X"
+        else:
+            print("The computer misses your ship!")
+            OUR_BOARD[row][column] = "-"
+            
+        if count_hit_ships(OUR_BOARD) == 5:
+            print("Oh no! The computer sank all your ships! You lost!")
             break
 
-
-playgame()
+create_ships(OUR_BOARD)
+create_ships(COMPUTER_BOARD)
+turns = 10
+play_game()
