@@ -8,8 +8,11 @@ from random import randint
 from random import choice
 
 global attacked_positions
+
+
 OUR_BOARD = [[" "] * 8 for x in range(8)]
 COMPUTER_BOARD = [[" "] * 8 for i in range(8)]
+HIDDEN_BOARD = [[" "] * 8 for i in range(8)]
 
 letters_to_numbers = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F':5, 'G':6, 'H': 7 }
 
@@ -23,7 +26,7 @@ def board(board):
     return result
 
 def create_ships(board):
-    for ship in range(5):
+    for ship in range(10):
         ship_row = randint(0,7)
         ship_column = randint(0,7)
         while board[ship_row][ship_column] == "S":
@@ -63,26 +66,31 @@ def count_hit_ships(board):
 
 def play_game():
     attacked_positions = []
+    print("Welcome to Battleship!")
+    print("To win you need to sink all the computers ships")
+    print("both you and the computer have 10 ships")
     while True:
-        print("Welcome to Battleship!")
         print("This is your Board")
         print(board(OUR_BOARD))
         print("This is the Computers Board")
-        print(board(COMPUTER_BOARD))
+        print(board(HIDDEN_BOARD))
         row, column = attack_ship()
+        ## YOUR TURN
         while COMPUTER_BOARD[row][column] == "-":
             print('You already have guessed that, try somewhere else')
             row, column = attack_ship()
         if COMPUTER_BOARD[row][column] == 'S':
             print("ITS A HIT!!! GOODJOB!!!")
             COMPUTER_BOARD[row][column] = "X"
+            HIDDEN_BOARD[row][column] = "X"
         else:
             print("Sorry, you missed!")
             COMPUTER_BOARD[row][column] = '-'
-        if count_hit_ships(COMPUTER_BOARD)==5:
+            HIDDEN_BOARD[row][column] = "-"
+        if count_hit_ships(COMPUTER_BOARD)==10:
             print("Congratulations all the ships are sunk! You won!")
             break
-##COMPUTERS TURN
+        ##COMPUTERS TURN
         row, column = computer_attack(attacked_positions)
         if OUR_BOARD[row][column] == "S":
             print("The computer hits your ship!")
@@ -91,7 +99,7 @@ def play_game():
             print("The computer misses your ship!")
             OUR_BOARD[row][column] = "-"
             
-        if count_hit_ships(OUR_BOARD) == 5:
+        if count_hit_ships(OUR_BOARD) == 10:
             print("Oh no! The computer sank all your ships! You lost!")
             break
 
