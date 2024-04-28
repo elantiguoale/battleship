@@ -73,9 +73,12 @@ def count_hit_ships(board):
 
 def play_game():
     attacked_positions = []
-    print("Welcome to Battleship!")
+    print("==================================================")
+    print("           Welcome to Battleship!")
     print("To win you need to sink all the computers ships")
     print("both you and the computer have 10 ships")
+    print("                 GOODLUCK!!!")
+    print("==================================================")
     while True:
         print("This is your Board")
         print(board(OUR_BOARD))
